@@ -8,22 +8,34 @@ namespace ml
 {
 
 // -----------------------------------------------------------------------------
-NeuralNetwork::NeuralNetwork(const std::size_t inputCount, 
+NeuralNetwork::NeuralNetwork(const std::size_t inputCount,
                              const std::size_t hiddenLayerCount,
                              const std::size_t hiddenNodeCount,
                              const std::size_t outputCount,
                              const ActFunc actFuncHidden,
                              const ActFunc actFuncOutput)
-    : myHiddenLayer{hiddenNodeCount, inputCount, actFuncHidden}
+    : myHiddenLayers{DenseLayer(hiddenNodeCount, inputCount, actFuncHidden)}
     , myOutputLayer{outputCount, hiddenNodeCount, actFuncOutput}
     , myTrainingInput{}
-    , myTrainingOutput{} {}
+    , myTrainingOutput{} 
+{
+    for (std::size_t i{1U}; i < hiddenLayerCount; ++i) {
+        myHiddenLayers.push_back(DenseLayer(hiddenNodeCount, hiddenNodeCount, actFuncHidden));
+    }
+}
+
 
 // -----------------------------------------------------------------------------
 std::size_t NeuralNetwork::inputCount() const noexcept
 {
-    // Input count = the weight count in the hidden layer.
-    return myHiddenLayer.weightCount();
+    // Input count = the weight count of the hidden layers
+    int total = 0;
+    for (const auto& layer : myHiddenLayers)
+    {
+        total += layer.weightCount();
+    }
+
+    return total;
 }
 
 // -----------------------------------------------------------------------------
@@ -56,6 +68,7 @@ bool NeuralNetwork::train(const std::size_t epochCount, const double learningRat
         for (std::size_t j{}; j < trainingSetCount(); ++j)
         {
             feedforward(myTrainingInput[j]); 
+
             backpropagate(myTrainingOutput[j]);
             optimize(myTrainingInput[j], learningRate);
         }
@@ -110,31 +123,58 @@ void NeuralNetwork::printResults(std::ostream& printSource)
 // -----------------------------------------------------------------------------
 void NeuralNetwork::feedforward(const std::vector<double>& input)
 {
-    // Perform feedforward for the hidden layer with given input.
-    myHiddenLayer.feedforward(input);
+    // Perform feedforward for the hidden layers with given input.
+
+
+    std::vector<double> currentInput = input;
+    for (auto& layer : myHiddenLayers)
+    {
+        layer.feedforward(currentInput);
+        currentInput = layer.output();
+    }
+
 
     // Perform feedforward for the output layer, use the output of the hidden layer as input.
-    myOutputLayer.feedforward(myHiddenLayer.output());
+    myOutputLayer.feedforward(myHiddenLayers[myHiddenLayers.size() - 1].output());
 }
 
 // -----------------------------------------------------------------------------
 void NeuralNetwork::backpropagate(const std::vector<double>& output)
 {
+    // Index for the last layer.
+    const auto last{static_cast<int>(myHiddenLayers.size() - 1U)};
+
     // Perform backpropagation for the output layer with given output.
     myOutputLayer.backpropagate(output);
 
+    // Perform backpropagation for the last hidden layer, use values from the output layer.
+    myHiddenLayers[last].backpropagate(myOutputLayer);
+
     // Perform backpropagation for the hidden layer, use values from the output layer.
-    myHiddenLayer.backpropagate(myOutputLayer);
+
+    // Perform backpropagation for the hidden layers, use values from next layer.
+    for (auto i = last - 1; i >= 0; --i)
+    {
+        myHiddenLayers[i].backpropagate(myHiddenLayers[i + 1]);
+    }
 }
 
 // -----------------------------------------------------------------------------
 void NeuralNetwork::optimize(const std::vector<double>& input, const double learningRate)
 {
     // Optimize the hidden layer with given input.
-    myHiddenLayer.optimize(input, learningRate);
+    // myHiddenLayers.optimize(input, learningRate);
+
+    std::vector<double> currentInput = input;
+    for (auto& layer : myHiddenLayers)
+    {
+        layer.optimize(currentInput, learningRate);
+        currentInput = layer.output();
+    }
+
 
     // Optimize the output layer with the output of the hidden layer as input.
-    myOutputLayer.optimize(myHiddenLayer.output(), learningRate);
+    myOutputLayer.optimize(myHiddenLayers[myHiddenLayers.size() - 1].output(), learningRate);
 }
 
 } // namespace ml

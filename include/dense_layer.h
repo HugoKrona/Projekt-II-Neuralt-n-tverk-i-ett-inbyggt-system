@@ -127,11 +127,7 @@ public:
      ******************************************************************************/
     void print(std::ostream& ostream = std::cout, const std::size_t decimalCount = 1U) const;
 
-    DenseLayer()                             = delete; // No default destructor.
-    DenseLayer(const DenseLayer&)            = delete; // No copy constructor.
-    DenseLayer(DenseLayer&&)                 = delete; // No move constructor.
-    DenseLayer& operator=(const DenseLayer&) = delete; // No copy assignment.
-    DenseLayer& operator=(DenseLayer&&)      = delete; // No move assignment.
+    DenseLayer() = delete; // No default destructor.
     
 private:
     std::vector<double> myOutput;               // Output of each node.
