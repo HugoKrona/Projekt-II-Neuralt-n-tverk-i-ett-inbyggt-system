@@ -17,7 +17,8 @@ int main()
     {
         if (button1.isEventDetected())
         {
-            led1.toggle();
+            led1.toggle(); 
+            // std::cout << "HUGO är sämst";
         }
     }
     return 0;
