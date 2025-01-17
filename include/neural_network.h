@@ -25,13 +25,15 @@ public:
      * @brief Creates a neural network.
      * 
      * @param inputCount    The number of inputs in the network.
-     * @param hiddenCount   The number of hidden nodes in the network.
+     * @param hiddenLayerCount The number of hidden layers in the network.
+     * @param hiddenNodeCount   The number of hidden nodes in the network.
      * @param outputCount   The number of outputs in the network.
      * @param actFuncHidden Activation function of the hidden layer (default = ReLU).
      * @param actFuncOutput Activation function of the hidden layer (default = ReLU).
      ******************************************************************************/
-    explicit NeuralNetwork(const std::size_t inputCount, 
-                           const std::size_t hiddenCount,
+    explicit NeuralNetwork(const std::size_t inputCount,
+                           const std::size_t hiddenLayerCount,
+                           const std::size_t hiddenNodeCount,
                            const std::size_t outputCount,
                            const ActFunc actFuncHidden = ActFunc::Relu,
                            const ActFunc actFuncOutput = ActFunc::Relu);

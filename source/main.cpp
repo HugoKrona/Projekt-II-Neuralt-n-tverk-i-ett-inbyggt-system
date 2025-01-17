@@ -25,7 +25,7 @@ int main()
     //     }
     // }
 
-    constexpr std::size_t epochCount{100000U};
+    constexpr std::size_t epochCount{10000U};
     constexpr double learningRate{0.01};
 
     const std::vector<std::vector<double>> inputSets{
@@ -74,13 +74,17 @@ const std::vector<std::vector<double>> referenceSets{
     {1.0}, {0.0}, {0.0}, {1.0}
 };
 
-
+    std::cout << "Training a neural network...\n";
     // Create a 5-3-1 neural network, use tanh as activation for the hidden layer.
-    ml::NeuralNetwork network{5U, 3U, 1U, ml::ActFunc::Relu};
+    ml::NeuralNetwork network{5U, 3u, 3U, 1U, ml::ActFunc::Relu};
 
+
+    
+    std::cout << "Adding training data...\n";
     // Add the training data.
     network.addTrainingData(inputSets, referenceSets);
 
+    std::cout << "Training the network...\n";
     // If the training went well, print the result in the terminal.
     if (network.train(epochCount, learningRate))
     {

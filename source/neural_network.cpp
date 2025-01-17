@@ -9,12 +9,13 @@ namespace ml
 
 // -----------------------------------------------------------------------------
 NeuralNetwork::NeuralNetwork(const std::size_t inputCount, 
-                             const std::size_t hiddenCount,
+                             const std::size_t hiddenLayerCount,
+                             const std::size_t hiddenNodeCount,
                              const std::size_t outputCount,
                              const ActFunc actFuncHidden,
                              const ActFunc actFuncOutput)
-    : myHiddenLayer{hiddenCount, inputCount, actFuncHidden}
-    , myOutputLayer{outputCount, hiddenCount, actFuncOutput}
+    : myHiddenLayer{hiddenNodeCount, inputCount, actFuncHidden}
+    , myOutputLayer{outputCount, hiddenNodeCount, actFuncOutput}
     , myTrainingInput{}
     , myTrainingOutput{} {}
 
