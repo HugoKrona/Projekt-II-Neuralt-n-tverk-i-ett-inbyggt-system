@@ -2,7 +2,10 @@
 SOURCE_FILES := source/button.cpp \
                 source/gpiod_utils.c \
 			    source/led.cpp \
-			    source/main.cpp
+			    source/main.cpp \
+				source/act_func.cpp \
+				source/dense_layer.cpp \
+				source/neural_network.cpp
 
 # Builds and runs the application as default.
 default: build run
