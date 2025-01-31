@@ -10,16 +10,18 @@
 #include "neural_network.h"
 
 /********************************************************************************
- * @brief Toggles a LED connected to pin 17 at press of a button connected
- *        to pin 27.
+ * @brief Trains a neural network to learn the XOR function.
  ********************************************************************************/
 int main() {
+    // Create LED and button objects.
     rpi::Led led1{17};
     rpi::Button button1{27}, button2{22}, button3{23}, button4{24}, button5{25};
 
+    // Create a neural network to learn the XOR function.
     constexpr std::size_t epochCount{110000U};
     constexpr double learningRate{0.01};
 
+    // Define the input and reference sets for the XOR function.
     const std::vector<std::vector<double>> inputSets{
         {0.0, 0.0, 0.0, 0.0, 0.0}, {0.0, 0.0, 0.0, 0.0, 1.0}, {0.0, 0.0, 0.0, 1.0, 0.0},
         {0.0, 0.0, 0.0, 1.0, 1.0}, {0.0, 0.0, 1.0, 0.0, 0.0}, {0.0, 0.0, 1.0, 0.0, 1.0},
@@ -38,13 +40,13 @@ int main() {
         {1.0}, {0.0}, {1.0}, {1.0}, {0.0}, {1.0}, {0.0}, {0.0}, {1.0}, {0.0}, {1.0},
         {1.0}, {0.0}, {0.0}, {1.0}, {1.0}, {0.0}, {1.0}, {0.0}, {0.0}, {1.0}};
 
-    // Create a 5-3-1 neural network, use tanh as activation for the hidden layer.
+    // Create a 5-5-5-1 neural network with hyperbolic tangent activation function.
     ml::NeuralNetwork network{5U, 5U, 5U, 1U, ml::ActFunc::Tanh};
 
     // Add the training data.
     network.addTrainingData(inputSets, referenceSets);
 
-    // If the training went well, print the result in the terminal.
+    // If training succeeded, print the results.
     if (network.train(epochCount, learningRate)) {
         network.printResults();
     }
@@ -53,7 +55,7 @@ int main() {
         std::cout << "Failed to train the network!\n";
     }
 
-    std::cout << "Done\n";
+    std::cout << "Training is done\n";
 
     std::vector<double> input(5, 0.0);
 
@@ -68,9 +70,9 @@ int main() {
         // Predict output using the neural network.
         std::vector<double> output = network.predict(input);
 
+        // Enable LED based on the output.
         const auto enable{output[0] >= 0.5 ? true : false};
         led1.write(enable);
     }
-
     return 0;
 }
