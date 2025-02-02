@@ -1,6 +1,10 @@
 # Prerequisites
 *.d
 
+# Ignore files without an extension, except makefiles.
+*.
+!makefile
+
 # Compiled Object files
 *.slo
 *.lo
