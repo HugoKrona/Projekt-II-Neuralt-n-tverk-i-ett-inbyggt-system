@@ -125,9 +125,7 @@ class NeuralNetwork {
      ******************************************************************************/
     void optimize(const std::vector<double> &output, const double learningRate);
 
-    /** @remark Please update the comment for myHiddenLayers below.
-     *          Consider writing something like "Hidden layers of the network".*/
-    std::vector<DenseLayer> myHiddenLayers;            // The network's single hidden layer.
+    std::vector<DenseLayer> myHiddenLayers;            // The network's hidden layers.
     DenseLayer myOutputLayer;                          // Output layer of the network.
     std::vector<std::vector<double>> myTrainingInput;  // Training input sets.
     std::vector<std::vector<double>> myTrainingOutput; // Training output sets.
